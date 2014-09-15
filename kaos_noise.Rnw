@@ -1,0 +1,54 @@
+\documentclass{article}
+
+\begin{document}
+\title{Echoview KAOS noise removal}
+\author{Lisa-Marie Harrison}
+\maketitle
+
+Using a 120Sv - 38Sv filter for each integration interval can be used to determine which intervals include krill. A difference of 2 - 12dB indicates that the interval contains krill.
+
+There are a number noise features in the KAOS data set that appear to be false bottom detections (or possibly ice?). I don't think that these could be the real bottom because they reach the surface and then disappear.
+
+These false bottom effects are generally expected to be filtered out using the \Sexpr{expression(delta)}MVBS filter, however in the case of the KAOS data set this doesn't appear to be the case, and these noise values are being included as krill.
+
+The screenshot below shows the 120kHz and 38kHz echograms with noise removed. The false bottom effect is evident in both.
+
+\centerline{\includegraphics[width=18cm]{false_bottom.png}}
+
+The \Sexpr{expression(delta)}MVBS window removes most of the noise area:
+
+<<svDiff, echo=FALSE, fig.align='center'>>=
+library(fields)
+dat <- read.csv("C:/Users/Lisa/Documents/phd/southern ocean/KAOS data/sv_diff.csv", header = T)
+
+sv <- dat$sv_diff[dat$int_date == 20030117 & as.character(int_time) > " 08:38:11.00" & as.character(int_time) < " 08:47:06.00"]
+
+sv_mat <- matrix(sv, nrow = 25)
+s <- t(sv_mat)[,nrow(sv_mat):1]
+
+image.plot(s)
+title("MVBS difference")
+
+s[s < 2 | s > 12] <- NA
+image.plot(s)
+title("MVBS difference between 2 - 12dB")
+
+@
+
+Removing all values outside of the 2-12dB window, the NASC values are shown below. It looks like there are still values remaining around the noise.
+
+<<nasc, echo=FALSE, fig.align='center'>>=
+nasc_120[sv == NA] <- 0
+nasc <- dat$nasc_120[dat$int_date == 20030117 & as.character(int_time) > " 08:38:11.00" & as.character(int_time) < " 08:47:06.00"]
+
+nasc_mat <- matrix(nasc, nrow = 25)
+s <- t(nasc_mat)[,nrow(nasc_mat):1]
+
+image.plot(s)
+title("NASC")
+@
+
+\end{document}
+
+
+
