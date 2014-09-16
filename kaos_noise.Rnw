@@ -38,13 +38,13 @@ title("MVBS difference between 2 - 12dB")
 Removing all values outside of the 2-12dB window, the NASC values are shown below. It looks like there are still values remaining around the noise.
 
 <<nasc, echo=FALSE, fig.align='center'>>=
-nasc_120[sv == NA] <- 0
 nasc <- dat$nasc_120[dat$int_date == 20030117 & as.character(int_time) > " 08:38:11.00" & as.character(int_time) < " 08:47:06.00"]
+nasc[is.na(s)] <- 0
 
 nasc_mat <- matrix(nasc, nrow = 25)
-s <- t(nasc_mat)[,nrow(nasc_mat):1]
+n <- t(nasc_mat)[,nrow(nasc_mat):1]
 
-image.plot(s)
+image.plot(n)
 title("NASC")
 @
 
